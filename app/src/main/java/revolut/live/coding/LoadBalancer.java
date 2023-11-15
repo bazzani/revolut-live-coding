@@ -3,6 +3,7 @@ package revolut.live.coding;
 import java.net.URI;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class LoadBalancer {
     private static final int MAX_INSTANCES_ALLOWED = 10;
@@ -10,15 +11,16 @@ public class LoadBalancer {
     final Set<URI> instances;
 
     public LoadBalancer() {
-        this.instances = new HashSet<>();
+        this.instances = ConcurrentHashMap.newKeySet();
     }
 
-    public void registerInstance(URI instanceUri) {
+    synchronized public void registerInstance(URI instanceUri) {
         if (registeredInstanceCount() == MAX_INSTANCES_ALLOWED) {
             throw new LoadBalancerException("You can only register 10 backend instances in the Load Balancer");
         }
 
         instances.add(instanceUri);
+
     }
 
     boolean isRegistered(URI instanceUri) {
