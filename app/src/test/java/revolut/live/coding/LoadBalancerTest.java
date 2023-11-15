@@ -106,4 +106,60 @@ class LoadBalancerTest {
         // then
         assertEquals("No instances in the Load Balancer", exception.getMessage());
     }
+
+    @Test
+    void shouldGetRoundRobinInstances() {
+        // given
+        LoadBalancer sut = new LoadBalancer(true);
+
+        URI instanceUri = URI.create("http://www.revolut.com1");
+        sut.registerInstance(instanceUri);
+        URI instanceUri2 = URI.create("http://www.revolut.com2");
+        sut.registerInstance(instanceUri2);
+        URI instanceUri3 = URI.create("http://www.revolut.com3");
+        sut.registerInstance(instanceUri3);
+
+        // when
+        URI uri1 = sut.get();
+        URI uri2 = sut.get();
+        URI uri3 = sut.get();
+        URI uri4 = sut.get();
+
+        // then
+        assertEquals(uri1, instanceUri);
+        assertEquals(uri2, instanceUri2);
+        assertEquals(uri3, instanceUri3);
+
+        assertEquals(uri1, uri4);
+    }
+
+    @Test
+    void shouldGetNewRoundRobinInstance() {
+        // given
+        LoadBalancer sut = new LoadBalancer(true);
+
+        URI instanceUri = URI.create("http://www.revolut.com1");
+        sut.registerInstance(instanceUri);
+        URI instanceUri2 = URI.create("http://www.revolut.com2");
+        sut.registerInstance(instanceUri2);
+        URI instanceUri3 = URI.create("http://www.revolut.com3");
+        sut.registerInstance(instanceUri3);
+
+        URI uri1 = sut.get();
+        URI uri2 = sut.get();
+        URI uri3 = sut.get();
+
+        assertEquals(uri1, instanceUri);
+        assertEquals(uri2, instanceUri2);
+        assertEquals(uri3, instanceUri3);
+
+        URI instanceUri4 = URI.create("http://www.revolut.com4");
+        sut.registerInstance(instanceUri4);
+
+        // when
+        URI uri4 = sut.get();
+
+        // then
+        assertEquals(uri4, instanceUri4);
+    }
 }

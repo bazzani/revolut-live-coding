@@ -10,3 +10,11 @@ Random invocation
 
 Develop an algorithm that, when invoking the Load Balancer's get() method multiple times,
 should return one backend-instance choosing between the registered ones randomly.
+
+
+----
+
+Round-Robin invocation
+
+Develop an algorithm that, when invoking multiple times the Load Balancer on its get() method,
+should return one backend-instance choosing between the registered one sequentially (round-robin).
