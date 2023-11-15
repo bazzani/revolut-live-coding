@@ -1,17 +1,16 @@
 package revolut.live.coding;
 
 import java.net.URI;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Random;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class LoadBalancer {
     private static final int MAX_INSTANCES_ALLOWED = 10;
 
-    final Set<URI> instances;
+    final CopyOnWriteArrayList<URI> instances;
 
     public LoadBalancer() {
-        this.instances = ConcurrentHashMap.newKeySet();
+        this.instances = new CopyOnWriteArrayList();
     }
 
     synchronized public void registerInstance(URI instanceUri) {
@@ -19,8 +18,9 @@ public class LoadBalancer {
             throw new LoadBalancerException("You can only register 10 backend instances in the Load Balancer");
         }
 
-        instances.add(instanceUri);
-
+        if (!instances.contains(instanceUri)) {
+            instances.add(instanceUri);
+        }
     }
 
     boolean isRegistered(URI instanceUri) {
@@ -29,5 +29,15 @@ public class LoadBalancer {
 
     public int registeredInstanceCount() {
         return instances.size();
+    }
+
+    public URI get() {
+        if (instances.isEmpty()) {
+            throw new LoadBalancerException("No instances in the Load Balancer");
+        }
+
+        int instanceIndex = new Random().nextInt(instances.size());
+
+        return instances.get(instanceIndex);
     }
 }
