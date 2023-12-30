@@ -36,3 +36,5 @@ build
 /.idea/vcs.xml
 /.idea/git_toolbox_prj.xml
 /.idea/modules.xml
+/.idea/sonarlint
+/.idea/modules
